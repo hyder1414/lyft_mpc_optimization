@@ -1,5 +1,6 @@
 # run_mpc_simulation.py
-
+from src.cost_function import total_cost
+from src.mpc import plan_path
 from src.data_loader import load_scene_data, extract_ego_from_frame
 
 def main():
@@ -13,6 +14,8 @@ def main():
     position, yaw = extract_ego_from_frame(frames, 0)
     print(f"Ego Position (x, y): {position}")
     print(f"Ego Heading (yaw): {yaw:.4f} radians")
+    path = plan_path(position, yaw)
+    print(f"Planned path shape: {path.shape}")
 
 if __name__ == "__main__":
     main()
