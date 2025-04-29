@@ -1,49 +1,46 @@
+#mpc.py
 import numpy as np
 from src.cost_function import total_cost
 
-def sequential_mpc(start, goal, agents, step_size=2.0, replan_horizon=25, max_steps=100):
-    """
-    Sequential MPC: Plan small horizons repeatedly until reaching the goal.
-    """
+def plan_naive_path(start, goal, num_steps=50):
+    """Simple straight-line interpolation."""
+    path = np.linspace(start, goal, num_steps)
+    return path
+
+def sequential_mpc(start, goal, agents, step_size=20.0, horizon=50):
+    """Very basic MPC: plan small steps toward goal minimizing total cost."""
     path = []
-    current_pos = np.array(start)
-    yaw = np.arctan2(goal[1] - start[1], goal[0] - start[0])
+    current = np.array(start)
 
-    for _ in range(max_steps):
-        sub_path = []
-        x, y = current_pos
-        for _ in range(replan_horizon):
-            x += step_size * np.cos(yaw)
-            y += step_size * np.sin(yaw)
-            sub_path.append((x, y))
-        
-        sub_path = np.array(sub_path)
-        path.extend(sub_path)
+    for _ in range(horizon):
+        direction = goal - current
+        direction = direction / np.linalg.norm(direction)  # normalize
+        candidates = []
 
-        current_pos = sub_path[-1]
+        for delta in np.linspace(-np.pi/18, np.pi/18, 5):  # small yaw variations
+            rotation_matrix = np.array([
+                [np.cos(delta), -np.sin(delta)],
+                [np.sin(delta), np.cos(delta)]
+            ])
+            move = rotation_matrix @ direction
+            next_point = current + step_size * move
+            candidates.append(next_point)
 
-        # Check distance to goal
-        if np.linalg.norm(current_pos - goal) < 20.0:
+        candidates = np.array(candidates)
+        costs = []
+
+        for cand in candidates:
+            fake_path = np.vstack([path, cand]) if path else np.array([cand])
+            total, _, _, _ = total_cost(fake_path)  # ⬅️ Catch all outputs, use only `total`
+            costs.append(total)
+
+        best_idx = np.argmin(costs)
+        best_next = candidates[best_idx]
+
+        path.append(best_next)
+        current = best_next
+
+        if np.linalg.norm(current - goal) < 20.0:
             break
 
-        # Recompute yaw direction toward goal
-        yaw = np.arctan2(goal[1] - current_pos[1], goal[0] - current_pos[0])
-
     return np.array(path)
-
-def plan_naive_path(start, goal, step_size=2.0):
-    """
-    Simple straight-line planner from start to goal.
-    """
-    start = np.array(start)
-    goal = np.array(goal)
-    direction = goal - start
-    distance = np.linalg.norm(direction)
-    if distance == 0:
-        return np.array([start])
-
-    direction /= distance  # normalize
-    n_steps = int(distance / step_size)
-
-    path = np.array([start + direction * step_size * i for i in range(n_steps + 1)])
-    return path
