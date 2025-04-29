@@ -21,9 +21,9 @@ The goal is to show that **MPC** improves over **Naive** path planning by minimi
 
 The **optimization objective** we use is:
 
-\[
+$$
 \text{Total Cost} = \text{Travel Time} + \lambda_{\text{collision}} \times \text{Collision Risk} + \lambda_{\text{offroad}} \times \text{Off-road Penalty}
-\]
+$$
 
 Where:
 - **Travel Time**: Proportional to number of path steps.
@@ -31,8 +31,8 @@ Where:
 - **Off-road Penalty**: Based on map brightness (penalty if off the road).
 
 **λ values**:
-- \(\lambda_{\text{collision}}\) = 1.0 (penalty per collision)
-- \(\lambda_{\text{offroad}}\) = 2.0 (penalty per off-road pixel)
+- $\lambda_{\text{collision}}$ = 1.0 (penalty per collision)
+- $\lambda_{\text{offroad}}$ = 2.0 (penalty per off-road pixel)
 
 ---
 
