@@ -1,16 +1,38 @@
-#MPC Optimization Project
+
+---
+
+# MPC Optimization Project
 
 ### Project Overview
 We perform **path optimization** between random start and goal points using:
 - **Baseline (Naive straight-line paths)**
 - **Optimized (MPC - Model Predictive Control)**
 
-We optimize based on a **cost function** that includes:
+We optimize based on a **custom cost function** that includes:
 - Travel Time
 - Collision Risk (simulated)
-- Off-Road Penalty (based on real aerial map)
+- Off-Road Penalty (real aerial map-based)
 
-The goal is to show that **MPC** improves over **Naive** path planning based on total cost.
+The goal is to show that **MPC** improves over **Naive** path planning by minimizing total cost.
+
+---
+
+### Objective Function
+
+The **optimization objective** we use is:
+
+\[
+\text{Total Cost} = \text{Travel Time} + \lambda_{\text{collision}} \times \text{Collision Risk} + \lambda_{\text{offroad}} \times \text{Off-road Penalty}
+\]
+
+Where:
+- **Travel Time**: Proportional to number of path steps.
+- **Collision Risk**: (Simulated / faked) number of likely collisions.
+- **Off-road Penalty**: Based on map brightness (penalty if off the road).
+
+**λ values**:
+- \(\lambda_{\text{collision}}\) = 1.0 (penalty per collision)
+- \(\lambda_{\text{offroad}}\) = 2.0 (penalty per off-road pixel)
 
 ---
 
@@ -50,7 +72,12 @@ The goal is to show that **MPC** improves over **Naive** path planning based on 
 
 ### Dataset
 - **Source**: [Lyft Motion Prediction for Autonomous Vehicles (Kaggle Competition)](https://www.kaggle.com/competitions/lyft-motion-prediction-autonomous-vehicles/data)
-- **Note**: Dataset must be pre-downloaded into the `data/` directory before running.
+- **Downloaded Files Used**:
+  - `scenes/sample.zarr`
+  - `scenes/scenes.json`
+  - `aerial_map/aerial_map.png`
+- **Note**: We **did not use the full dataset** (e.g., no need for `agents`, `traffic_lights`, `timestamps`, etc.).  
+  Only the above three were necessary for loading scenes, frames, and basic ego vehicle information.
 
 ---
 
@@ -69,3 +96,4 @@ batch_size = 100
 inside `run_batch_mpc_simulation.py`.
 
 ---
+
