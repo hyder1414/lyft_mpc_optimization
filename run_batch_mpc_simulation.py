@@ -4,13 +4,13 @@ import csv
 import random
 import numpy as np
 import matplotlib.pyplot as plt
+
 from src.data_loader import load_scene_data, extract_ego_from_frame
 from src.mpc import plan_naive_path, sequential_mpc
 from src.cost_function import total_cost
 from src.utils import euclidean_distance
 
 def pick_random_start_goal(frames, min_distance=900, max_distance=1100):
-    """Pick two ego positions from random frames that are ~1000m apart."""
     while True:
         f1 = random.randint(0, len(frames) - 1)
         f2 = random.randint(0, len(frames) - 1)
@@ -75,7 +75,7 @@ def main():
         writer.writeheader()
         writer.writerows(results)
 
-    print("\n✅ Batch run finished. Results in results/logs/batch_results.csv")
+    print("\n✅ Batch run finished. Results saved to results/logs/batch_results.csv")
 
 if __name__ == "__main__":
     main()
