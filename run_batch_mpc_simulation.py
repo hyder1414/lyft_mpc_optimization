@@ -45,6 +45,7 @@ def main():
 
         print(f"Naive Total Cost: {naive_total:.2f} (Time={naive_time:.2f}, Coll={naive_collision:.2f}, Offroad={naive_offroad:.2f})")
         print(f"MPC   Total Cost: {mpc_total:.2f} (Time={mpc_time:.2f}, Coll={mpc_collision:.2f}, Offroad={mpc_offroad:.2f})")
+        print(f"iLQR Total Cost: {ilqr_total:.2f} (Time={ilqr_time:.2f}, Coll ={ilqr_collision:.2f}, Offroad = {ilqr_offroad:.2f}")
 
         results.append({
             "start_x": start[0], "start_y": start[1],
