@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from src.data_loader import load_scene_data, extract_ego_from_frame
-from src.mpc import plan_naive_path, sequential_mpc
+from src.mpc import plan_naive_path, sequential_mpc_optimized
 from src.cost_function import total_cost
 from src.utils import euclidean_distance
 
@@ -35,7 +35,7 @@ def main():
         print(f"\n[{i+1}/{batch_size}] Distance: {distance:.2f}m")
 
         naive_path = plan_naive_path(start, goal)
-        mpc_path = sequential_mpc(start, goal, agents)
+        mpc_path = sequential_mpc_optimized(start, goal, agents)
 
         naive_total, naive_time, naive_collision, naive_offroad = total_cost(naive_path)
         mpc_total, mpc_time, mpc_collision, mpc_offroad = total_cost(mpc_path)
