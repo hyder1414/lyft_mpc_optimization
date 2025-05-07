@@ -80,3 +80,4 @@ def sequential_mpc_optimized(start, goal, agents, step_size=20.0, horizon=50, la
             break
 
     return np.array(path)
+

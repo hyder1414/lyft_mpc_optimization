@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 
 from src.data_loader import load_scene_data, extract_ego_from_frame
 from src.mpc import plan_naive_path, sequential_mpc_optimized
+from src.lqr import ilqr_path_planner
 from src.cost_function import total_cost
 from src.utils import euclidean_distance
 
@@ -36,9 +37,11 @@ def main():
 
         naive_path = plan_naive_path(start, goal)
         mpc_path = sequential_mpc_optimized(start, goal, agents)
+        ilqr_path = ilqr_path_planner(start, goal)
 
         naive_total, naive_time, naive_collision, naive_offroad = total_cost(naive_path)
         mpc_total, mpc_time, mpc_collision, mpc_offroad = total_cost(mpc_path)
+        ilqr_total, ilqr_time, ilqr_collision, ilqr_offroad = total_cost(ilqr_path)
 
         print(f"Naive Total Cost: {naive_total:.2f} (Time={naive_time:.2f}, Coll={naive_collision:.2f}, Offroad={naive_offroad:.2f})")
         print(f"MPC   Total Cost: {mpc_total:.2f} (Time={mpc_time:.2f}, Coll={mpc_collision:.2f}, Offroad={mpc_offroad:.2f})")
@@ -54,7 +57,11 @@ def main():
             "mpc_total": mpc_total,
             "mpc_travel_time": mpc_time,
             "mpc_collision": mpc_collision,
-            "mpc_offroad": mpc_offroad
+            "mpc_offroad": mpc_offroad,
+            "ilqr_total": ilqr_total,
+            "ilqr_travel_time": ilqr_time,
+            "ilqr_collision": ilqr_collision,
+            "ilqr_offroad": ilqr_offroad
         })
 
         # Plot
