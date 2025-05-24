@@ -1,15 +1,17 @@
 # Trajectory Optimization Using Model Predictive Control (MPC)
 
-**Graduate Optimization Project (MSML 604)**  
-**University of Maryland-College Park**  
+**Optimization Project (MSML 604)**  
+**University of Maryland-College Park** 
 **Advisor**: Dr. Richard LA 
-
 **Authors**: Haider Khan, Satwika Konda, Harshit Singh, Sivani Mallangi, Prakhar Tiwari  
 High-performance experiments executed on **Zaratan High-Performance Computing**, UMD
+
 
 ---
 ![gif](https://github.com/user-attachments/assets/8a42b4a2-7e1e-4023-afcd-112fdadf8833)
 ---
+
+
 
 ## 📌 Overview
 
