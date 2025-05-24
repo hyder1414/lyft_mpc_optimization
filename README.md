@@ -1,99 +1,82 @@
+# Trajectory Optimization Using Model Predictive Control (MPC)
+
+**Graduate Optimization Project (MSML 604)**  
+**University of Maryland-College Park**  
+Authors: Haider Khan, Satwika Konda, Harshit Singh, Sivani Mallangi, Prakhar Tiwari  
+High-performance experiments executed on **Zaratan High-Performance Computing**, UMD
 
 ---
 
-# MPC Optimization Project
+## 📌 Overview
 
-### Project Overview
-We perform **path optimization** between random start and goal points using:
-- **Baseline (Naive straight-line paths)**
-- **Optimized (MPC - Model Predictive Control)**
+This repository presents a trajectory optimization framework for autonomous vehicles using **Model Predictive Control (MPC)**. The system was built from scratch to operate at **50 Hz**, deploying real-time MPC over geo-referenced aerial maps from the **Lyft Level-5 Motion Prediction dataset**. Unlike reactive or sampling-based planners, our formulation solves a **multi-objective optimization** problem at every timestep, minimizing a custom-defined cost:
 
-We optimize based on a **custom cost function** that includes:
-- Travel Time
-- Collision Risk (simulated)
-- Off-Road Penalty (real aerial map-based)
+<img width="675" alt="Screenshot 2025-05-23 at 9 52 29 PM" src="https://github.com/user-attachments/assets/151b7aea-8f75-4153-a313-b3dfdb335fd5" />
 
-The goal is to show that **MPC** improves over **Naive** path planning by minimizing total cost.
 
 ---
 
-### Objective Function
+## 📊 Dataset
 
-The **optimization objective** we use is:
+**Lyft Level-5 Motion Prediction Dataset** (LL5-Pred)  
+- 1,118 hours of real-world AV logs, 250Hz sampling, annotated actors, HD semantic maps  
+- Used **high-resolution aerial raster imagery** to compute off-road cost as pixel intensity  
+- Only static-agent scenes selected to isolate planner performance from stochastic prediction
 
-$$
-\text{Total Cost} = \text{Travel Time} + \lambda_{\text{collision}} \times \text{Collision Risk} + \lambda_{\text{offroad}} \times \text{Off-road Penalty}
-$$
-
-Where:
-- **Travel Time**: Proportional to number of path steps.
-- **Collision Risk**: (Simulated / faked) number of likely collisions.
-- **Off-road Penalty**: Based on map brightness (penalty if off the road).
-
-**λ values**:
-- $\lambda_{\text{collision}}$ = 1.0 (penalty per collision)
-- $\lambda_{\text{offroad}}$ = 2.0 (penalty per off-road pixel)
+Data preprocessing and scene rendering leveraged **L5Kit** for:
+- Actor-centric rasterization  
+- Semantic map generation @ 25 cm/pixel  
+- Ego-state trajectory extraction  
 
 ---
 
-### File Structure
-| File/Folder | Purpose |
-|:------------|:--------|
-| `run_mpc_simulation.py` | Runs a single random start-goal simulation (for testing/debugging). |
-| `run_batch_mpc_simulation.py` | Runs **10 random simulations** in batch and saves results + plots. |
-| `analyze_batch_results.py` | Analyzes batch results, prints summary statistics, saves graphs. |
-| `src/` | Contains code modules: `mpc.py`, `cost_function.py`, `data_loader.py`, `utils.py`, etc. |
-| `results/logs/batch_results.csv` | CSV log of the batch run (costs for Naive vs MPC paths). |
-| `results/plots/` | Saved path plots for each simulation. |
+## ⚙️ Methodology
+<img width="690" alt="Screenshot 2025-05-23 at 9 58 43 PM" src="https://github.com/user-attachments/assets/97a71a80-a314-4da6-b818-51a55d8de642" />
+<img width="832" alt="Screenshot 2025-05-23 at 10 00 00 PM" src="https://github.com/user-attachments/assets/fb0d9386-98f5-4c3a-a563-bcc85f46ddf8" />
+<img width="676" alt="Screenshot 2025-05-23 at 10 01 22 PM" src="https://github.com/user-attachments/assets/0a4c660d-5d21-423a-b9ec-15574cc37371" />
+<img width="681" alt="Screenshot 2025-05-23 at 10 01 38 PM" src="https://github.com/user-attachments/assets/d299df49-5ba8-4aff-bb5f-1020b45181c5" />
+
 
 ---
 
-### How to Run
-**(On Zaratan HPC)**
+## 📈 Results & Plots
 
-1. Load environment:
-    ```bash
-    source venv/bin/activate
-    ```
+### 1. Off-road Penalty Comparison  
+<img width="655" alt="Screenshot 2025-05-23 at 10 10 48 PM" src="https://github.com/user-attachments/assets/64aa3de3-90b4-4f9c-a34d-4c6520131c52" />
 
-2. Run batch simulation:
-    ```bash
-    python run_batch_mpc_simulation.py
-    ```
+> MPC reduces off-road incursions by dynamically adjusting trajectory to map constraints. Penalty dropped from constant 250 (naive) to average ~235.
 
-3. Analyze batch results:
-    ```bash
-    python analyze_batch_results.py
-    ```
+### 2. Cost Distribution  
+<img width="690" alt="Screenshot 2025-05-23 at 10 11 42 PM" src="https://github.com/user-attachments/assets/3790f664-12af-400f-953c-b34c3e75b3d1" />
 
-4. Download `results/` folder to your local machine if needed (for reports/plots).
+> Variance and median total cost significantly improved under MPC. Tighter interquartile range indicates more **robust planning**.
 
----
+### 3. Run-wise Total Cost with MPC Advantage  
+<img width="634" alt="Screenshot 2025-05-23 at 10 12 13 PM" src="https://github.com/user-attachments/assets/800134e9-588c-437a-bb16-93b348b0d032" />
 
-### Dataset
-- **Source**: [Lyft Motion Prediction for Autonomous Vehicles (Kaggle Competition)](https://www.kaggle.com/competitions/lyft-motion-prediction-autonomous-vehicles/data)
-- **Downloaded Files Used**:
-  - `scenes/sample.zarr`
-  - `scenes/scenes.json`
-  - `aerial_map/aerial_map.png`
-- **Note**: We **did not use the full dataset** (e.g., no need for `agents`, `traffic_lights`, `timestamps`, etc.).  
-  Only the above three were necessary for loading scenes, frames, and basic ego vehicle information.
+> In 8 out of 10 simulations, MPC outperformed the naive planner in total cost. Highlighted area shows **cost advantage per run**.
+
+### 4. Off-road Penalty Trends  
+<img width="690" alt="Screenshot 2025-05-23 at 10 12 46 PM" src="https://github.com/user-attachments/assets/4f21b333-dff5-425d-86a1-4c4c93e62419" />
+
+> Naive planner always incurs maximum penalty (250). MPC adapts to each scenario to remain on-road, showing clear **trajectory intelligence**.
+
+### 5. Total Cost Trends  
+<img width="706" alt="Screenshot 2025-05-23 at 10 13 16 PM" src="https://github.com/user-attachments/assets/95449491-119c-4015-b3b7-7cf8e076cf8c" />
+
+> MPC dynamically re-plans and selects cost-minimizing trajectories, leading to a **mean cost reduction of 75.4 units**.
 
 ---
 
-### Notes
-- Code was **tested and run** on **Zaratan HPC** (University of Maryland).
-- **Python version**: 3.6 (Zaratan default).
-- **Key packages**: `matplotlib`, `numpy`, `Pillow`, `zarr`, `pandas`.
+## 🧠 Key Achievements
+
+- 🚀 Designed and implemented an **MPC planner** from first principles.
+- 🌍 Incorporated **geo-referenced aerial maps** as soft constraints for off-road avoidance.
+- ⚙️ Executed full pipeline on **Zaratan HPC**, enabling fast iteration and 50Hz inference.
+- 🧮 Reduced average total cost by **5.8%**, travel time by **2.9 steps**, and off-road penalty significantly.
+- 📊 Visualized all runs with cost breakdowns, distributions, and shaded comparison plots.
 
 ---
 
-### Scaling Up (Optional)
-To run a **larger batch** (like 100 simulations instead of 10), **edit**:
-```python
-batch_size = 100
-```
-inside `run_batch_mpc_simulation.py`.
-
----
+## 📂 Project Structure
 
