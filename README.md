@@ -2,7 +2,8 @@
 
 **Graduate Optimization Project (MSML 604)**  
 **University of Maryland-College Park**  
-**Advisor**: Dr. Samet Ayhan 
+**Advisor**: Dr. Richard LA 
+
 **Authors**: Haider Khan, Satwika Konda, Harshit Singh, Sivani Mallangi, Prakhar Tiwari  
 High-performance experiments executed on **Zaratan High-Performance Computing**, UMD
 
