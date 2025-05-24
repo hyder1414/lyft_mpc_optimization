@@ -69,6 +69,7 @@ Data preprocessing and scene rendering leveraged **L5Kit** for:
 ---
 
 ## 🧠 Key Achievements
+<img width="762" alt="Screenshot 2025-05-23 at 10 17 52 PM" src="https://github.com/user-attachments/assets/59f7d58c-ffa0-4bee-8807-96b804f3a297" />
 
 - 🚀 Designed and implemented an **MPC planner** from first principles.
 - 🌍 Incorporated **geo-referenced aerial maps** as soft constraints for off-road avoidance.
@@ -77,6 +78,4 @@ Data preprocessing and scene rendering leveraged **L5Kit** for:
 - 📊 Visualized all runs with cost breakdowns, distributions, and shaded comparison plots.
 
 ---
-
-## 📂 Project Structure
 
